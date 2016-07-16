@@ -1,10 +1,10 @@
 # sdl-jstest
 
 This sdl-jstest is a fork of the http://github.com/Grumbel/sdl-jstest.
-In this repository we have the SDL2 version of the program only, and its
+In this repository we have the SDL2 version only, and its
 name is sdl-jstest.c (in the original repo it is named sdl2-jstest.c).
 
-The `sdl2-jstest` is a simple program that lets you find
+The `sdl-jstest` is a simple program that lets you find
 out how many joysticks SDL2 detected on your system, how many
 axes, buttons, hats and balls they have each. They also lets you test
 the joysticks by displaying the events they send or by displaying
@@ -21,7 +21,7 @@ feature, it isn't usefull for my needs.)
 
 [TODO: add more examples!]
 
-The `--test` option shows this output:
+Here is an example output when using the `--test`:
 
 ```text
 Joystick Name:   'Twin USB Joystick'
@@ -65,11 +65,15 @@ Press Ctrl-c to exit
 ## Requirements
 
 sdl-jstest requires the following packages to build:
-TODO: CHECAR OS NOMES DOS PACOTES NO RASP, DEBIAN E UBUNTU
 
 - libsdl2-dev
 - libncurses5-dev
 
+To install them in a Debian-based distribution:
+
+```sh
+sudo apt-get install libsdl2-dev libncurses5-dev
+```
 
 
 ## Compilation
@@ -79,7 +83,7 @@ Simply type:
 
     make
 
-And the `sdl-jstest` will be created.
+And the `sdl-jstest` binary will be created.
 
 
 ## Info from the original repository
