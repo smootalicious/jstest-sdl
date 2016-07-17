@@ -45,6 +45,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+/* constants *****************************************************************/
 #define VERSION "0.2.0-meleu"
 
 #define HELP_MESSAGE "\
@@ -64,6 +65,8 @@ Options:\n\
                             the joystick\n\
   -r, --rumble JOYNUM       Test rumble effects on gamepad JOYNUM\n\n"
 
+
+/* functions *****************************************************************/
 void print_bar(int pos, int len) {
     addch('[');
     for(int i = 0; i < len; ++i) {
@@ -520,6 +523,7 @@ void test_rumble(int joy_idx) {
     }
 }
 
+/* main() ********************************************************************/
 int main(int argc, char** argv) {
     if (argc == 1) {
         print_help(argv[0]);
