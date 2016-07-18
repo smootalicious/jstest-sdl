@@ -3,11 +3,13 @@
  * This is a forked version of the Ingo Ruhnke sdl2-jstest.
  * I renamed it to sdl-jstest because I just wanna use the SDL2 version.
  *
- * TODO:    - implement the --list-simple option.
- *          - implement the --single-event option.
+ * TODO:    - implement the --single-event option.
+ *          - clean the code
  *
  * Changelog:
  ************
+ * 2016-07-18:  Added the --listsimple option.
+ * 
  * 2016-07-16:  Just adapting the original code to my coding style. There is
  *              no new feature implemented.
  *
@@ -46,7 +48,7 @@
 #include <stdlib.h>
 
 /* constants *****************************************************************/
-#define VERSION "0.2.0-meleu"
+#define VERSION "0.2.1-meleu"
 
 #define HELP_MESSAGE "\
 List available joysticks or test a joystick.\n\
@@ -58,6 +60,8 @@ Options:\n\
   --version                 Print version number and exit\n\
   -l, --list                Search for available joysticks and list\n\
                             their properties\n\
+  -ls, --listsimple         Search for available joysticks and list\n\
+                            their index and name\n\
   -t, --test JOYNUM         Display a graphical representation of\n\
                             the current joystick state\n\
   -g, --gamecontroller IDX  Test GameController\n\
@@ -67,6 +71,16 @@ Options:\n\
 
 
 /* functions *****************************************************************/
+void simple_list_joysticks() {
+    int num_joysticks = SDL_NumJoysticks();
+    if (num_joysticks < 0)
+        printf("No joysticks were found\n");
+    else
+        for(int i = 0; i < num_joysticks; i++)
+            printf("%d:%s\n", i, SDL_JoystickNameForIndex(i));
+}
+
+
 void print_bar(int pos, int len) {
     addch('[');
     for(int i = 0; i < len; ++i) {
@@ -77,6 +91,7 @@ void print_bar(int pos, int len) {
     }
     addch(']');
 }
+
 
 int str2int(const char* str, int* val) {
     char* endptr;
@@ -96,6 +111,7 @@ int str2int(const char* str, int* val) {
 
     return 1;
 }
+
 
 void print_joystick_info(int joy_idx, SDL_Joystick* joy, SDL_GameController* gamepad) {
     SDL_JoystickGUID guid = SDL_JoystickGetGUID(joy);
@@ -119,6 +135,7 @@ void print_joystick_info(int joy_idx, SDL_Joystick* joy, SDL_GameController* gam
     printf("\n");
 }
 
+
 void print_help(const char* prg) {
     printf("Usage: %s [OPTION]\n", prg);
     printf(HELP_MESSAGE);
@@ -126,6 +143,7 @@ void print_help(const char* prg) {
     printf("  %s --list\n", prg);
     printf("  %s --test 1\n", prg);
 }
+
 
 void list_joysticks() {
     int num_joysticks = SDL_NumJoysticks();
@@ -148,6 +166,7 @@ void list_joysticks() {
         }
     }
 }
+
 
 void test_joystick(int joy_idx) {
     SDL_Joystick* joy = SDL_JoystickOpen(joy_idx);
@@ -287,6 +306,7 @@ void test_joystick(int joy_idx) {
     }
 }
 
+
 void test_gamecontroller_events(SDL_GameController* gamepad) {
     assert(gamepad);
 
@@ -374,6 +394,7 @@ void test_gamecontroller_events(SDL_GameController* gamepad) {
     }
 }
 
+
 void test_gamecontroller_state(SDL_GameController* gamepad) {
     assert(gamepad);
 
@@ -405,6 +426,7 @@ void test_gamecontroller_state(SDL_GameController* gamepad) {
     }
 }
 
+
 void test_gamecontroller(int gamecontroller_idx) {
     SDL_GameController* gamepad = SDL_GameControllerOpen(gamecontroller_idx);
     if (!gamepad) {
@@ -416,6 +438,7 @@ void test_gamecontroller(int gamecontroller_idx) {
         SDL_GameControllerClose(gamepad);
     }
 }
+
 
 void event_joystick(int joy_idx) {
     SDL_Joystick* joy = SDL_JoystickOpen(joy_idx);
@@ -497,6 +520,7 @@ void event_joystick(int joy_idx) {
     }
 }
 
+
 void test_rumble(int joy_idx) {
     SDL_Joystick* joy = SDL_JoystickOpen(joy_idx);
     if (!joy) {
@@ -522,6 +546,7 @@ void test_rumble(int joy_idx) {
         SDL_JoystickClose(joy);
     }
 }
+
 
 /* main() ********************************************************************/
 int main(int argc, char** argv) {
@@ -552,6 +577,10 @@ int main(int argc, char** argv) {
         else if (argc == 2 && (strcmp(argv[1], "--list") == 0 ||
                               (strcmp(argv[1], "-l") == 0))) {
             list_joysticks();
+        }
+        else if (argc == 2 && (strcmp(argv[1], "--listsimple") == 0 ||
+                              (strcmp(argv[1], "-ls") == 0))) {
+            simple_list_joysticks();
         }
         else if (argc == 3 && (strcmp(argv[1], "--gamecontroller") == 0 ||
                                strcmp(argv[1], "-g") == 0)) {
