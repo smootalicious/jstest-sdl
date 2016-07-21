@@ -69,7 +69,7 @@ jstest-sdl requires the following packages to build:
 - libsdl2-dev
 - libncurses5-dev
 
-So, too install it in a Debian-based distribution:
+So, to install it in a Debian-based distribution:
 
 ```sh
 sudo apt-get install libsdl2-dev libncurses5-dev
