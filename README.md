@@ -19,9 +19,18 @@ feature, it isn't usefull for my needs.)
 
 ## Usage examples
 
-[TODO: add more examples!]
+Get a simple list of available joysticks with their respective index number:
 
-Here is an example output when using the `--test`:
+```sh
+[prompt]$ jstest-sdl --listsimple
+0:Twin USB Joystick
+1:Twin USB Joystick
+2:ipega Extending Game Controller
+3:8Bitdo Zero Game Pad
+```
+   
+Now you can test the joystick input with the `--test` option and a joystick
+index number. Here is an output example of what I got using `jstest-sdl --test 0`:
 
 ```text
 Joystick Name:   'Twin USB Joystick'
@@ -60,6 +69,8 @@ Balls  0:
 Press Ctrl-c to exit
 ```
 
+Now you can press the buttons and see the feedback. Those bars at the top are for analog directionals
+and the trigger buttons (usually R2 and L2).
 
 
 ## Installation
@@ -71,11 +82,24 @@ jstest-sdl requires the following packages to build:
 
 So, to install it in a Debian-based distribution:
 
+**install the dependencies:**
 ```sh
 sudo apt-get install libsdl2-dev libncurses5-dev
+```
+
+**download the code**
+```sh
 git clone http://github.com/meleu/jstest-sdl
+```
+
+**compile it**
+```sh
 cd jstest-sdl
 make
+```
+
+**put the binary in a cool place**
+```sh
 sudo cp jstest-sdl /usr/local/bin/
 ```
 
