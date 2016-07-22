@@ -1,11 +1,4 @@
-# Makefile for building sdl-jstest
-#gcc sdl-jstest.c -o sdl-jstest \
-#    -std=c99 \
-#    -lncurses -ltinfo \
-#    -I/usr/include/SDL2 -D_REENTRANT \
-#    -lSDL2
-
-####### Compiler, tools and options
+# Makefile for building jstest-sdl
 
 CC	=	gcc
 
