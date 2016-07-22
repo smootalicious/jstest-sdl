@@ -1,7 +1,7 @@
-/* sdl-jstest.c
+/* jstest-sdl.c
  ***************
- * This is a forked version of the Ingo Ruhnke sdl2-jstest.
- * I renamed it to sdl-jstest because I just wanna use the SDL2 version.
+ * This is a fork of the Ingo Ruhnke sdl2-jstest.
+ * I renamed it to jstest-sdl.
  *
  * TODO:    - implement the --single-event option.
  *          - clean the code
@@ -14,7 +14,7 @@
  *              no new feature implemented.
  *
  *
- * github repository: https://github.com/meleu/sdl-jstest
+ * github repository: https://github.com/meleu/jstest-sdl
  * original repository: https://github.com/Grumbel/sdl-jstest
  */
 
