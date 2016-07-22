@@ -98,9 +98,9 @@ cd jstest-sdl
 make
 ```
 
-**put the binary in a cool place**
+**put binary at `/usr/local/bin/`**
 ```sh
-sudo cp jstest-sdl /usr/local/bin/
+make install
 ```
 
 ## Info from the original repository

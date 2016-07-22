@@ -13,3 +13,5 @@ all:
 clean:
 	-rm -f jstest-sdl
 
+install:
+	sudo cp jstest-sdl /usr/local/bin/
