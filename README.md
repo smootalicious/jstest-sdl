@@ -62,29 +62,22 @@ Press Ctrl-c to exit
 
 
 
-## Requirements
+## Installation
 
 jstest-sdl requires the following packages to build:
 
 - libsdl2-dev
 - libncurses5-dev
 
-To install them in a Debian-based distribution:
+So, to install it in a Debian-based distribution:
 
 ```sh
 sudo apt-get install libsdl2-dev libncurses5-dev
+git clone http://github.com/meleu/jstest-sdl
+cd jstest-sdl
+make
+sudo cp jstest-sdl /usr/local/bin/
 ```
-
-
-## Compilation
-
-
-Simply type:
-
-    make
-
-And the `jstest-sdl` binary will be created.
-
 
 ## Info from the original repository
 
