@@ -15,8 +15,8 @@ LIBS	= -lncurses -ltinfo -lSDL2
 
 
 all:
-	$(CC) sdl-jstest.c -o sdl-jstest $(CFLAGS) $(INCPATH) $(LIBS)
+	$(CC) jstest-sdl.c -o jstest-sdl $(CFLAGS) $(INCPATH) $(LIBS)
 
 clean:
-	-rm -f sdl-jstest
+	-rm -f jstest-sdl
 
