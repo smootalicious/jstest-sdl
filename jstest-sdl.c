@@ -48,7 +48,7 @@
 #include <stdlib.h>
 
 /* constants *****************************************************************/
-#define VERSION "0.2.1-meleu"
+#define VERSION "0.2.1a-smoot"
 
 #define HELP_MESSAGE "\
 List available joysticks or test a joystick.\n\
@@ -146,6 +146,35 @@ void print_help(const char* prg) {
 
 
 void list_joysticks() {
+
+  // Try to load the game controller database file
+  char db_filename[1024] = {0};
+  snprintf(db_filename, sizeof(db_filename), "%sgamecontrollerdb.txt",
+           SDL_GetPrefPath("", "m8c"));
+  SDL_Log("Trying to open game controller database from %s", db_filename);
+  SDL_RWops* db_rw = SDL_RWFromFile(db_filename, "rb");
+  if (db_rw == NULL) {
+    snprintf(db_filename, sizeof(db_filename), "%sgamecontrollerdb.txt",
+    SDL_GetBasePath());
+    SDL_Log("Trying to open game controller database from %s", db_filename);
+    db_rw = SDL_RWFromFile(db_filename, "rb");
+  }
+
+  if (db_rw != NULL) {
+    int mappings = SDL_GameControllerAddMappingsFromRW(db_rw, 1);
+    if (mappings != -1) {
+      SDL_Log("Found %d game controller mappings", mappings);
+    } else {
+      SDL_LogError(SDL_LOG_CATEGORY_INPUT,
+                   "Error loading game controller mappings.");
+	  SDL_Log("Error loading game controller mappings.");
+	}
+  } else {
+    SDL_LogError(SDL_LOG_CATEGORY_INPUT,
+                 "Unable to open game controller database file.");
+	SDL_Log("Unable to open game controller database file.");
+  }
+
     int num_joysticks = SDL_NumJoysticks();
     if (num_joysticks == 0) {
         printf("No joysticks were found\n");
