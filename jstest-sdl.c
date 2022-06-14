@@ -114,17 +114,30 @@ int str2int(const char* str, int* val) {
 
 
 void print_joystick_info(int joy_idx, SDL_Joystick* joy, SDL_GameController* gamepad) {
+    int num_axes    = SDL_JoystickNumAxes(joy);
+    int num_buttons = SDL_JoystickNumButtons(joy);
+    int num_hats    = SDL_JoystickNumHats(joy);
+    int num_balls   = SDL_JoystickNumBalls(joy);
+
     SDL_JoystickGUID guid = SDL_JoystickGetGUID(joy);
     char guid_str[1024];
     SDL_JoystickGetGUIDString(guid, guid_str, sizeof(guid_str));
+                
+    // override for OpenSimHardware OSH PB Controller on rg351v
+    if (strcmp(guid_str, "03000000091200000031000011010000") == 0) {
+        num_axes    = 2;
+        num_buttons = 12;
+        num_hats    = 1;
+        num_balls   = 0;
+    }
 
     printf("Joystick Name:     '%s'\n", SDL_JoystickName(joy));
     printf("Joystick GUID:     %s\n", guid_str);
     printf("Joystick Number:   %2d\n", joy_idx);
-    printf("Number of Axes:    %2d\n", SDL_JoystickNumAxes(joy));
-    printf("Number of Buttons: %2d\n", SDL_JoystickNumButtons(joy));
-    printf("Number of Hats:    %2d\n", SDL_JoystickNumHats(joy));
-    printf("Number of Balls:   %2d\n", SDL_JoystickNumBalls(joy));
+    printf("Number of Axes:    %2d\n", num_axes);
+    printf("Number of Buttons: %2d\n", num_buttons);
+    printf("Number of Hats:    %2d\n", num_hats);
+    printf("Number of Balls:   %2d\n", num_balls);
     printf("GameController:\n");
     if (!gamepad) {
         printf("  not a gamepad\n");
@@ -146,35 +159,7 @@ void print_help(const char* prg) {
 
 
 void list_joysticks() {
-  SDL_LogSetAllPriority(SDL_LOG_PRIORITY_INFO);
-
-  // Try to load the game controller database file
-  char db_filename[1024] = {0};
-  snprintf(db_filename, sizeof(db_filename), "%sgamecontrollerdb.txt",
-           SDL_GetPrefPath("", "m8c"));
-  SDL_Log("Trying to open game controller database from %s", db_filename);
-  SDL_RWops* db_rw = SDL_RWFromFile(db_filename, "rb");
-  if (db_rw == NULL) {
-    snprintf(db_filename, sizeof(db_filename), "%sgamecontrollerdb.txt",
-    SDL_GetBasePath());
-    SDL_Log("Trying to open game controller database from %s", db_filename);
-    db_rw = SDL_RWFromFile(db_filename, "rb");
-  }
-
-  if (db_rw != NULL) {
-    int mappings = SDL_GameControllerAddMappingsFromRW(db_rw, 1);
-    if (mappings != -1) {
-      SDL_Log("Found %d game controller mappings", mappings);
-    } else {
-      SDL_LogError(SDL_LOG_CATEGORY_INPUT,
-                   "Error loading game controller mappings.");
-	  SDL_Log("Error loading game controller mappings.");
-	}
-  } else {
-    SDL_LogError(SDL_LOG_CATEGORY_INPUT,
-                 "Unable to open game controller database file.");
-	SDL_Log("Unable to open game controller database file.");
-  }
+    SDL_LogSetAllPriority(SDL_LOG_PRIORITY_INFO);
 
     int num_joysticks = SDL_NumJoysticks();
     if (num_joysticks == 0) {
@@ -267,7 +252,20 @@ void test_joystick(int joy_idx) {
 
                 printw("Joystick Name:   '%s'\n", SDL_JoystickName(joy));
                 printw("Joystick Number: %d\n", joy_idx);
+
+                // override for OpenSimHardware OSH PB Controller on rg351v
+                SDL_JoystickGUID guid = SDL_JoystickGetGUID(joy);
+                char guid_str[1024];
+                SDL_JoystickGetGUIDString(guid, guid_str, sizeof(guid_str));
+                printw("Joystick GUID:     %s\n", guid_str);
                 printw("\n");
+                
+                if (strcmp(guid_str, "03000000091200000031000011010000") == 0) {
+                    num_axes    = 2;
+                    num_buttons = 12;
+                    num_hats    = 1;
+                    num_balls   = 0;
+                }
 
                 printw("Axes %2d:\n", num_axes);
                 for(int i = 0; i < num_axes; ++i) {
@@ -277,18 +275,10 @@ void test_joystick(int joy_idx) {
                     addch('\n');
                 }
                 printw("\n");
-
-                if (num_buttons == 193) { // workaround for OpenSimHardware OSH PB Controller
-                    printw("Buttons %2d:\n", 12);
-                    for(int i = 0; i < 12; ++i) {
-                        printw("  %2d: %d  %s\n", i, buttons[i], buttons[i] ? "[#]":"[ ]");
-                    }
-                }
-                else {
-                    printw("Buttons %2d:\n", num_buttons);
-                    for(int i = 0; i < num_buttons; ++i) {
-                        printw("  %2d: %d  %s\n", i, buttons[i], buttons[i] ? "[#]":"[ ]");
-                    }
+                
+                printw("Buttons %2d:\n", num_buttons);
+                for(int i = 0; i < num_buttons; ++i) {
+                    printw("  %2d: %d  %s\n", i, buttons[i], buttons[i] ? "[#]":"[ ]");
                 }
                 printw("\n");
 
@@ -483,7 +473,11 @@ void event_joystick(int joy_idx) {
     if (!joy) {
         fprintf(stderr, "Unable to open joystick %d\n", joy_idx);
     } else {
-        print_joystick_info(joy_idx, joy, NULL);
+        SDL_GameController* gamepad = SDL_GameControllerOpen(joy_idx);
+        print_joystick_info(joy_idx, joy, gamepad);
+        if (gamepad) {
+            SDL_GameControllerClose(gamepad);
+        }
 
         printf("Entering joystick test loop, press Ctrl-c to exit\n");
         int quit = 0;
@@ -596,6 +590,34 @@ int main(int argc, char** argv) {
     }
     
     SDL_LogSetAllPriority(SDL_LOG_PRIORITY_WARN);
+
+    // Try to load the game controller database file
+    char db_filename[1024] = {0};
+    snprintf(db_filename, sizeof(db_filename), "%sgamecontrollerdb.txt",
+            SDL_GetPrefPath("", "m8c"));
+    SDL_Log("Trying to open game controller database from %s", db_filename);
+    SDL_RWops* db_rw = SDL_RWFromFile(db_filename, "rb");
+    if (db_rw == NULL) {
+        snprintf(db_filename, sizeof(db_filename), "%sgamecontrollerdb.txt",
+        SDL_GetBasePath());
+        SDL_Log("Trying to open game controller database from %s", db_filename);
+        db_rw = SDL_RWFromFile(db_filename, "rb");
+    }
+
+    if (db_rw != NULL) {
+    int mappings = SDL_GameControllerAddMappingsFromRW(db_rw, 1);
+    if (mappings != -1) {
+        SDL_Log("Found %d game controller mappings", mappings);
+    } else {
+        SDL_LogError(SDL_LOG_CATEGORY_INPUT,
+                    "Error loading game controller mappings.");
+        SDL_Log("Error loading game controller mappings.");
+    }
+    } else {
+    SDL_LogError(SDL_LOG_CATEGORY_INPUT,
+                    "Unable to open game controller database file.");
+    SDL_Log("Unable to open game controller database file.");
+    }
 
     // SDL2 will only report events when the window has focus, so set
     // this hint as we don't have a window
