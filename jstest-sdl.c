@@ -497,8 +497,8 @@ void event_joystick(int joy_idx) {
                     break;
 
                 case SDL_JOYBUTTONDOWN:
-                    printf("SDL_JOYBUTTONDOWN: joystick: %d button: %d state: %d\n",
-                            event.jbutton.which, event.jbutton.button, event.jbutton.state);
+                    printf("SDL_JOYBUTTONDOWN: joystick: %d button: %d state: %d  id: b%d\n",
+                            event.jbutton.which, event.jbutton.button, event.jbutton.state, event.jbutton.button);
                     break;
 
                 case SDL_JOYBUTTONUP:
@@ -507,8 +507,10 @@ void event_joystick(int joy_idx) {
                     break;
 
                 case SDL_JOYHATMOTION:
-                    printf("SDL_JOYHATMOTION: joystick: %d hat: %d value: %d\n",
+                    printf("SDL_JOYHATMOTION: joystick: %d hat: %d value: %d",
                             event.jhat.which, event.jhat.hat, event.jhat.value);
+                    if (event.jhat.value >0) printf("  id: h%d.%d\n",event.jhat.hat, event.jhat.value );
+                     else printf("\n");
                     break;
 
                 case SDL_JOYBALLMOTION:
