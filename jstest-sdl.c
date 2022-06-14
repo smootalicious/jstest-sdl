@@ -146,6 +146,7 @@ void print_help(const char* prg) {
 
 
 void list_joysticks() {
+  SDL_LogSetAllPriority(SDL_LOG_PRIORITY_INFO);
 
   // Try to load the game controller database file
   char db_filename[1024] = {0};
@@ -591,6 +592,8 @@ int main(int argc, char** argv) {
         print_help(argv[0]);
         exit(1);
     }
+    
+    SDL_LogSetAllPriority(SDL_LOG_PRIORITY_WARN);
 
     // SDL2 will only report events when the window has focus, so set
     // this hint as we don't have a window
