@@ -438,19 +438,17 @@ void test_gamecontroller_state(SDL_GameController* gamepad) {
                 break;
         }
 
-        for(int btn = 0; btn < SDL_CONTROLLER_BUTTON_MAX; ++btn) {
-            printf("%s:%d ",
-                    SDL_GameControllerGetStringForButton(btn),
-                    SDL_GameControllerGetButton(gamepad, btn));
+        if (event.type == SDL_CONTROLLERBUTTONDOWN || event.type == SDL_CONTROLLERAXISMOTION) {
+            for(int btn = 0; btn < SDL_CONTROLLER_BUTTON_MAX; ++btn) {
+                if (SDL_GameControllerGetButton(gamepad, btn)!=0) printf("%s \n",
+                    SDL_GameControllerGetStringForButton(btn));
+                }
+            if (event.type == SDL_CONTROLLERAXISMOTION)
+                for(int axis = 0; axis < SDL_CONTROLLER_AXIS_MAX; ++axis) {
+                    if (SDL_GameControllerGetAxis(gamepad, axis)!=0 && SDL_GameControllerGetAxis(gamepad, axis)!=-1) printf("%s \n",
+                        SDL_GameControllerGetStringForAxis(axis));
+            }
         }
-
-        for(int axis = 0; axis < SDL_CONTROLLER_AXIS_MAX; ++axis) {
-            printf("%s:%6d ",
-                    SDL_GameControllerGetStringForAxis(axis),
-                    SDL_GameControllerGetAxis(gamepad, axis));
-        }
-
-        printf("\n");
     }
 }
 
@@ -496,15 +494,16 @@ void event_joystick(int joy_idx) {
                     break;
 
                 case SDL_JOYBUTTONUP:
-                    printf("SDL_JOYBUTTONUP: joystick: %d button: %d state: %d\n",
-                            event.jbutton.which, event.jbutton.button, event.jbutton.state);
+                    //printf("SDL_JOYBUTTONUP: joystick: %d button: %d state: %d\n",
+                    //        event.jbutton.which, event.jbutton.button, event.jbutton.state);
                     break;
 
                 case SDL_JOYHATMOTION:
-                    printf("SDL_JOYHATMOTION: joystick: %d hat: %d value: %d",
+                    if (event.jhat.value >0) {
+                        printf("SDL_JOYHATMOTION: joystick: %d hat: %d value: %d",
                             event.jhat.which, event.jhat.hat, event.jhat.value);
-                    if (event.jhat.value >0) printf("  id: h%d.%d\n",event.jhat.hat, event.jhat.value );
-                     else printf("\n");
+                        printf("  id: h%d.%d\n",event.jhat.hat, event.jhat.value );
+                    }
                     break;
 
                 case SDL_JOYBALLMOTION:
